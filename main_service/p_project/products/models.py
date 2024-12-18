@@ -134,3 +134,20 @@ class ShopSeller(models.Model):
 
     def __str__(self):
         return f"Shop ID: {self.shop.id}, Seller ID: {self.seller.id}"
+
+
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Product, through='CartProduct')
+
+    def __str__(self):
+        return f"Cart for User: {self.user.id}"
+
+
+class CartProduct(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        db_table = 'cart_products'

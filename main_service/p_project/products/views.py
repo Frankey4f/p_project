@@ -1,105 +1,203 @@
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from products.models import Category, Order, Product, ProductCategory, Review, Seller, SellerUser, ShippingAddress, \
-    ShopSeller, Shop
-from products.serializers import CategorySerializer, OrderSerializer, ProductSerializer, ProductCategorySerializer, \
-    ReviewSerializer, SellerSerializer, SellerUserSerializer, ShippingAddressSerializer, ShopSellerSerializer
+from itertools import product
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from products.services import CategoryService, OrderService, ProductService, ReviewService, SellerService, \
+    ShippingAddressService, ShopService
 
 
-class CategoryListCreateView(ListCreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class CategoryListView(APIView):
+    def get(self, request):
+        categories = CategoryService.get_all_categories()
+        return Response([product.__dict__ for product in categories], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        category = CategoryService.create_category(request.data)
+        return Response(category.__dict__, status=status.HTTP_201_CREATED)
 
 
-class CategoryDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+class CategoryDetailView(APIView):
+    def get(self, request, category_id):
+        category = CategoryService.get_category_by_id(category_id)
+        if not category:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(category.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, category_id):
+        category = CategoryService.update_category(category_id, request.data)
+        if not category:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(category.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, category_id):
+        CategoryService.delete_category(category_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class OrderListCreateView(ListCreateAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+class OrderListView(APIView):
+    def get(self, request):
+        orders = OrderService.get_all_orders()
+        return Response([order.__dict__ for order in orders], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        order = OrderService.create_order(request.data)
+        return Response(order.__dict__, status=status.HTTP_201_CREATED)
 
 
-class OrderDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+class OrderDetailView(APIView):
+    def get(self, request, order_id):
+        order = OrderService.get_order_by_id(order_id)
+        if not order:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(order.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, order_id):
+        order = OrderService.update_order(order_id, request.data)
+        if not order:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(order.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, order_id):
+        OrderService.delete_order(order_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProductListCreateView(ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+class ProductListView(APIView):
+    def get(self, request):
+        products = ProductService.get_all_products()
+        return Response([product.__dict__ for product in products], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        product = ProductService.create_product(request.data)
+        return Response(product.__dict__, status=status.HTTP_201_CREATED)
 
 
-class ProductDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+class ProductDetailView(APIView):
+    def get(self, request, product_id):
+        product = ProductService.get_product_by_id(product_id)
+        if not product:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(product.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, product_id):
+        product = ProductService.update_product(product_id, request.data)
+        if not product:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(product.__dict__, status=status.HTTP_200_OK)
 
 
-class ReviewListCreateView(ListCreateAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+class ReviewListView(APIView):
+    def get(self, request):
+        reviews = ReviewService.get_all_reviews()
+        return Response([review.__dict__ for review in reviews], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        review = ReviewService.create_review(request.data)
+        return Response(review.__dict__, status=status.HTTP_201_CREATED)
 
 
-class ReviewDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
+class ReviewDetailView(APIView):
+    def get(self, request, review_id):
+        review = ReviewService.get_review_by_id(review_id)
+        if not review:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(review.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, review_id):
+        review = ReviewService.update_review(review_id, request.data)
+        if not review:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(review.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, review_id):
+        ReviewService.delete_review(review_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProductCategoryListCreateView(ListCreateAPIView):
-    queryset = ProductCategory.objects.all()
-    serializer_class = ProductCategorySerializer
+class SellerListView(APIView):
+    def get(self, request):
+        sellers = list(product.seller for product in ProductService.get_all_products())
+        return Response([seller.__dict__ for seller in sellers], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        seller = SellerService.create_seller(request.data)
+        return Response(seller.__dict__, status=status.HTTP_201_CREATED)
 
 
-class ProductCategoryDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = ProductCategory.objects.all()
-    serializer_class = ProductCategorySerializer
+class SellerDetailView(APIView):
+    def get(self, request, seller_id):
+        seller = SellerService.get_seller_by_id(seller_id)
+        if not seller:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(seller.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, seller_id):
+        seller = SellerService.update_seller(seller_id, request.data)
+        if not seller:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(seller.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, seller_id):
+        SellerService.delete_seller(seller_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SellerListCreateView(ListCreateAPIView):
-    queryset = Seller.objects.all()
-    serializer_class = SellerSerializer
+class ShippingAddressListView(APIView):
+    def get(self, request):
+        shipping_addresses = list(order.shipping_address for order in OrderService.get_all_orders())
+        return Response([address.__dict__ for address in shipping_addresses], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        address = ShippingAddressService.create_shipping_address(request.data)
+        return Response(address.__dict__, status=status.HTTP_201_CREATED)
 
 
-class SellerDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Seller.objects.all()
-    serializer_class = SellerSerializer
+class ShippingAddressDetailView(APIView):
+    def get(self, request, address_id):
+        address = ShippingAddressService.get_shipping_address_by_id(address_id)
+        if not address:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(address.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, address_id):
+        address = ShippingAddressService.update_shipping_address(address_id, request.data)
+        if not address:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(address.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, address_id):
+        ShippingAddressService.delete_shipping_address(address_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SellerUserListCreateView(ListCreateAPIView):
-    queryset = SellerUser.objects.all()
-    serializer_class = SellerUserSerializer
+class ShopListView(APIView):
+    def get(self, request):
+        shops = list(seller.shop for seller in SellerService.get_all_sellers())
+        return Response([shop.__dict__ for shop in shops], status=status.HTTP_200_OK)
+
+    def post(self, request):
+        shop = ShopService.create_shop(request.data)
+        return Response(shop.__dict__, status=status.HTTP_201_CREATED)
 
 
-class SellerUserDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = SellerUser.objects.all()
-    serializer_class = SellerUserSerializer
+class ShopDetailView(APIView):
+    def get(self, request, shop_id):
+        shop = ShopService.get_shop_by_id(shop_id)
+        if not shop:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(shop.__dict__, status=status.HTTP_200_OK)
+
+    def put(self, request, shop_id):
+        shop = ShopService.update_shop(shop_id, request.data)
+        if not shop:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(shop.__dict__, status=status.HTTP_200_OK)
+
+    def delete(self, request, shop_id):
+        ShopService.delete_shop(shop_id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ShippingAddressListCreateView(ListCreateAPIView):
-    queryset = ShippingAddress.objects.all()
-    serializer_class = ShippingAddressSerializer
 
-
-class ShippingAddressDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = ShippingAddress.objects.all()
-    serializer_class = ShippingAddressSerializer
-
-
-class ShopSellerListCreateView(ListCreateAPIView):
-    queryset = ShopSeller.objects.all()
-    serializer_class = ShopSellerSerializer
-
-
-class ShopSellerDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = ShopSeller.objects.all()
-    serializer_class = ShopSellerSerializer
-
-
-class ShopListCreateView(ListCreateAPIView):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSellerSerializer
-
-
-class ShopDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Shop.objects.all()
-    serializer_class = ShopSellerSerializer
