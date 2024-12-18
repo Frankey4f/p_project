@@ -1,11 +1,10 @@
-from itertools import product
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from products.services import CategoryService, OrderService, ProductService, ReviewService, SellerService, \
-    ShippingAddressService, ShopService
+    ShippingAddressService, ShopService, CartService
 
 
 class CategoryListView(APIView):
@@ -198,6 +197,24 @@ class ShopDetailView(APIView):
     def delete(self, request, shop_id):
         ShopService.delete_shop(shop_id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AddToCartView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, product_id):
+        quantity = request.data.get('quantity', 1)
+        CartService.add_product_to_cart(request.user.id, product_id, quantity)
+        return Response("message: Product added to cart successfully", status=status.HTTP_201_CREATED)
+
+
+class CartDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, cart_id):
+        cart_content = CartService.get_cart_content(cart_id)
+        data = [{"name": p.name, "price": p.price, "quantity": c.quantity} for p, c in cart_content]
+        return Response({"cart":data}, status=status.HTTP_200_OK)
 
 
 
