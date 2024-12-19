@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(unique=True)
+    name = models.CharField(max_length=50)
+    description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -42,10 +42,10 @@ class Order(models.Model):
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(unique=True)
+    name = models.CharField(max_length=50)
+    description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.BooleanField(default=False)
+    stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     seller_id = models.ForeignKey('Seller', on_delete=models.CASCADE)
@@ -68,7 +68,7 @@ class ProductCategory(models.Model):
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
     rating = models.FloatField()
-    comment = models.TextField(unique=True)
+    comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -81,7 +81,7 @@ class Review(models.Model):
 class Seller(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
-    description = models.TextField(unique=True)
+    description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -145,9 +145,10 @@ class Cart(models.Model):
 
 
 class CartProduct(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
     class Meta:
         db_table = 'cart_products'
+

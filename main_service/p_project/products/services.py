@@ -2,7 +2,7 @@ from products.domain import CategoryDomain, OrderDomain, ProductDomain, ReviewDo
     ShippingAddressDomain, ShopDomain
 from products.repositories import CategoryRepository, OrderRepository, ProductRepository, ReviewRepository, \
     SellerRepository, ShippingAddressesRepository, ShopRepository
-from models import Cart, Product, CartProduct
+from .models import Cart, Product, CartProduct
 
 
 class CategoryService:
