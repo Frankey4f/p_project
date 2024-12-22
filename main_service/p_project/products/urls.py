@@ -20,6 +20,6 @@ urlpatterns = [
     path('shipping_address/<int:pk>/', ShippingAddressDetailView.as_view(), name='shipping-address-detail'),
     path('shop/', ShopListView.as_view(), name='shop-list-create'),
     path('shop/<int:pk>/', ShopDetailView.as_view(), name='shop-detail'),
-    path('api/cart/add/<int:product_id>/', AddToCartView.as_view(), name='add-to-cart'),
-    path('api/cart/', CartDetailView.as_view(), name='cart-detail'),
+    path('cart/add/<int:product_id>/', AddToCartView.as_view(), name='add-to-cart'),
+    path('cart/', CartDetailView.as_view(), name='cart-detail'),
 ]

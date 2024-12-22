@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 
 class Category(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -13,7 +12,6 @@ class Category(models.Model):
 
 
 class Order(models.Model):
-    id = models.AutoField(primary_key=True)
     customer_name = models.CharField(max_length=50)
     item = models.CharField(max_length=50)
     quantity = models.IntegerField()
@@ -41,7 +39,6 @@ class Order(models.Model):
 
 
 class Product(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -66,7 +63,6 @@ class ProductCategory(models.Model):
 
 
 class Review(models.Model):
-    id = models.AutoField(primary_key=True)
     rating = models.FloatField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -79,7 +75,6 @@ class Review(models.Model):
 
 
 class Seller(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -101,7 +96,6 @@ class SellerUser(models.Model):
 
 
 class ShippingAddress(models.Model):
-    id = models.AutoField(primary_key=True)
     address_line = models.TextField()
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -114,7 +108,6 @@ class ShippingAddress(models.Model):
 
 
 class Shop(models.Model):
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField()
     address = models.TextField()
@@ -141,13 +134,13 @@ class Cart(models.Model):
     products = models.ManyToManyField(Product, through='CartProduct')
 
     def __str__(self):
-        return f"Cart for User: {self.user.id}"
+        return f"Cart of {self.user.username}"
 
 
 class CartProduct(models.Model):
-    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
         db_table = 'cart_products'

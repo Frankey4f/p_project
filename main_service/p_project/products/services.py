@@ -3,6 +3,7 @@ from products.domain import CategoryDomain, OrderDomain, ProductDomain, ReviewDo
 from products.repositories import CategoryRepository, OrderRepository, ProductRepository, ReviewRepository, \
     SellerRepository, ShippingAddressesRepository, ShopRepository
 from .models import Cart, Product, CartProduct
+from django.contrib.auth.models import User
 
 
 class CategoryService:
@@ -229,26 +230,27 @@ class ShopService:
 
 class CartService:
     @staticmethod
-    def get_or_create_cart(customer_id):
-        cart = Cart.objects.get_or_create(customer_id=customer_id)
+    def get_or_create_cart(user):
+        cart, created = Cart.objects.get_or_create(user=user)
         return cart
 
     @staticmethod
-    def add_product_to_cart(cart_id, product_id, quantity=1):
-        cart = CartService.get_or_create_cart(cart_id)
+    def add_product_to_cart(user, product_id, quantity=1):
+        cart = CartService.get_or_create_cart(user)
         product = Product.objects.get(id=product_id)
         cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
         cart_product.quantity += quantity
         cart_product.save()
+        return cart_product
 
     @staticmethod
-    def get_cart_content(cart_id):
-        cart = CartService.get_or_create_cart(cart_id)
+    def get_cart_content(user):
+        cart = CartService.get_or_create_cart(user)
         return cart.products.all()
 
     @staticmethod
-    def remove_product_from_cart(cart_id, product_id):
-        cart = CartService.get_or_create_cart(cart_id)
+    def remove_product_from_cart(user, product_id):
+        cart = CartService.get_or_create_cart(user)
         cart_product = CartProduct.objects.filter(cart=cart, product_id=product_id).first()
         if cart_product:
             cart_product.delete()
