@@ -45,7 +45,8 @@ class Product(models.Model):
     stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    seller_id = models.ForeignKey('Seller', on_delete=models.CASCADE)
+    seller_id = models.ForeignKey('Seller', on_delete=models.CASCADE,
+                                  null=True, blank=True)
 
     class Meta:
         db_table = 'products'
