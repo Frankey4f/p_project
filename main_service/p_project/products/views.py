@@ -218,8 +218,9 @@ class AddToCartView(APIView):
 class CartDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, cart_id):
-        cart_content = CartService.get_cart_content(cart_id)
+    def get(self, request):
+        user = request.user
+        cart_content = CartService.get_cart_content(user=user)
         data = [{"name": p.name, "price": p.price, "quantity": c.quantity} for p, c in cart_content]
         return Response({"cart": data}, status=status.HTTP_200_OK)
 
@@ -230,3 +231,6 @@ class CartRemoveView(APIView):
     def delete(self, request, product_id, cart_id):
         CartService.remove_product_from_cart(cart_id, product_id)
         return Response("message: Product removed from cart successfully", status=status.HTTP_204_NO_CONTENT)
+
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0OTQxNTcxLCJpYXQiOjE3MzQ5NDEyNzEsImp0aSI6IjIyNGY0ZWRkYTVhOTQzNDhiN2JkYjhiMWY4M2RkMDE3IiwidXNlcl9pZCI6OH0.l0HL_9heOO4c1jmoyjdElOI7C1xc9gHmsDjCs9CL2pw
